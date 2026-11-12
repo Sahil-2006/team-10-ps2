@@ -3,7 +3,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 
 export const metadata: Metadata = {
-  title: "Restocker",
+  title: "StockPilot",
   description: "AI-powered inventory restock agent for FreshMart, Velachery",
 };
 

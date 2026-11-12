@@ -1,4 +1,4 @@
-# 📦 Restocker: AI-Powered Inventory Restock Agent
+# 📦 StockPilot: AI-Powered Inventory Restock Agent
 
 **Team 10** | PS2 | SRM Agentic AI Hackathon
 
@@ -56,8 +56,7 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, Next.js route handlers, Z
 5. Check `/api/health` if something does not work.
 
 ## Team
-
-- M P Pranav Kumar: AI / Agent
-- Subash Moorthi: Team Lead + Database
-- Eediga Ram Charan: Backend / API
-- Shreel Singh: Frontend
+Team 10	PS2	Inventory Restock Agent	Supply chain	RA2411033010095	ZIYA KHAN	zk8757@srmist.edu.in	AM2	
+Team 10	PS2	Inventory Restock Agent	Supply chain	RA2411033010140	PARIDHI BABEL	pb0425@srmist.edu.in	AN2	
+Team 10	PS2	Inventory Restock Agent	Supply chain	RA2411033010142	SUJAL PATIDAR	sp4972@srmist.edu.in	AN2	
+Team 10	PS2	Inventory Restock Agent	Supply chain	RA2411033010152	SAHIL SHABBIRALI HARYANI	sh3586@srmist.edu.in	AN2	

@@ -24,7 +24,7 @@ export default function NavBar() {
         <div className="flex items-center gap-3">
           <span className="text-3xl">📦</span>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Restocker</h1>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">StockPilot</h1>
             <p className="text-xs text-slate-500">FreshMart Velachery</p>
           </div>
         </div>

@@ -32,7 +32,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             <div className="text-7xl">📦</div>
           </div>
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Restocker</h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">StockPilot</h1>
           <p className="text-sm text-slate-600">AI-Powered Inventory Intelligence</p>
         </div>
         
