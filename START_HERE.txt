@@ -1,0 +1,44 @@
+STOCKPILOT · TEAM 18 · START HERE
+=================================
+
+Your repo is empty right now (only a README), so npm install fails.
+Claude Code fixes that itself in "Phase 0" of CLAUDE.md.
+
+1) MOVE OUT OF ONEDRIVE (OneDrive breaks node_modules)
+   In cmd:
+     mkdir C:\Projects
+     cd C:\Projects
+     git clone https://github.com/Pranav006svg/team-18-ps2.git
+     cd team-18-ps2
+   (You can delete the old copy inside OneDrive.)
+
+2) COPY THIS KIT INTO THE REPO
+   Unzip and copy EVERYTHING inside "team-18-ps2-kit" into C:\Projects\team-18-ps2
+   (CLAUDE.md, AGENTS.md, START_HERE.txt, .github\, docs\, seed\).
+   In File Explorer turn on View > Show > Hidden items so you see the .github folder.
+
+3) START CLAUDE CODE
+     code .
+   Open the terminal in VS Code (Ctrl + `), run:   claude
+   Press Shift+Tab to turn on auto-accept edits.
+   Paste the prompt below.
+
+4) WHEN CLAUDE STOPS AND ASKS
+   - Fill .env.local (Gemini key, Supabase URL, Supabase secret key, passcode)
+   - Supabase > SQL Editor: run seed/00_starter_example.sql, then seed/ps2_inventory_restock.sql
+   - Reply "done" and it continues.
+
+5) YOU DO BY HAND AT THE END
+   - Vercel: import team-18-ps2, add the 5 env variables, Deploy
+   - Give Claude the Vercel link + passcode for the README
+   - Re-run seed/ps2_inventory_restock.sql in Supabase to reset data before the demo
+   - Slides (docs/PLAN.md Part D)
+
+---------------- PASTE THIS INTO CLAUDE CODE ----------------
+
+Read CLAUDE.md fully, then docs/PLAN.md, then seed/ps2_inventory_restock.sql.
+Start with Phase 0 (bootstrap the starter template, install, env check, health check), then build StockPilot end to end by following docs/PLAN.md Part C phases P1, P2, P3, P4, P5, P7, P8 exactly as written, with the rules in CLAUDE.md as hard rules.
+After each phase: build, fix errors, self-test against the running dev server, commit and push, give me a 2-line status and continue without waiting.
+Only stop when CLAUDE.md says you must ask me. At the end give me the final report described in CLAUDE.md.
+
+-------------------------------------------------------------
