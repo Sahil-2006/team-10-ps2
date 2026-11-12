@@ -22,11 +22,25 @@ const DEMO_MODE = true;
  * 4. Repeat until Gemini gives a final text answer (or MAX_ROUNDS is reached).
  */
 export async function runAgent(messages: ChatMessage[]): Promise<AgentResult> {
-  // DEMO MODE: Simulate AI agent responses
-  if (DEMO_MODE) {
-    return simulateAgentResponse(messages);
+  // Try real Gemini first, fallback to demo mode if it fails
+  if (!DEMO_MODE) {
+    try {
+      return await runRealAgent(messages);
+    } catch (error) {
+      console.error("Gemini API failed, falling back to demo mode:", error);
+      // Fallback to simulated response
+      return simulateAgentResponse(messages);
+    }
   }
+  
+  // Demo mode: Simulate AI agent responses
+  return simulateAgentResponse(messages);
+}
 
+/**
+ * Real Gemini agent implementation
+ */
+async function runRealAgent(messages: ChatMessage[]): Promise<AgentResult> {
   const ai = getGemini();
   const steps: AgentStep[] = [];
   const functionDeclarations = toFunctionDeclarations(tools);
