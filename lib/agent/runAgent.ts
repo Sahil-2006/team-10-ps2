@@ -11,6 +11,9 @@ import type { AgentResult, AgentStep } from "./types";
 /** Stops the agent from looping forever and using up your Gemini quota. */
 const MAX_ROUNDS = 8;
 
+/** DEMO MODE: Set to true to simulate AI responses without calling Gemini API */
+const DEMO_MODE = true;
+
 /**
  * THE AGENT LOOP
  * 1. Send the chat + the tool list to Gemini.
