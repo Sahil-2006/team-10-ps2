@@ -1,12 +1,15 @@
 import "server-only";
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 import { requireEnv } from "./env";
 
-let client: GoogleGenAI | null = null;
+let client: OpenAI | null = null;
 
-export function getGemini(): GoogleGenAI {
+export function getGemini(): OpenAI {
   if (!client) {
-    client = new GoogleGenAI({ apiKey: requireEnv("GEMINI_API_KEY") });
+    client = new OpenAI({
+      apiKey: requireEnv("OPENROUTER_API_KEY"),
+      baseURL: "https://openrouter.ai/api/v1",
+    });
   }
   return client;
 }

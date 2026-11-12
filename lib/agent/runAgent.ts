@@ -1,10 +1,8 @@
 import "server-only";
-import type { Content, Part } from "@google/genai";
 import { getGemini } from "../gemini";
 import { GEMINI_MODEL } from "../env";
 import type { ChatMessage } from "../schemas";
 import { tools } from "./tools";
-import { toFunctionDeclarations } from "./defineTool";
 import { buildSystemPrompt } from "./systemPrompt";
 import type { AgentResult, AgentStep } from "./types";
 
@@ -16,75 +14,104 @@ const DEMO_MODE = process.env.DEMO_MODE === 'true';
 
 /**
  * THE AGENT LOOP
- * 1. Send the chat + the tool list to Gemini.
- * 2. If Gemini asks for tools, check the arguments with Zod and run them.
- * 3. Send the results back to Gemini.
- * 4. Repeat until Gemini gives a final text answer (or MAX_ROUNDS is reached).
+ * 1. Send the chat + the tool list to OpenRouter (Gemini via OpenRouter).
+ * 2. If the model asks for tools, check the arguments with Zod and run them.
+ * 3. Send the results back to the model.
+ * 4. Repeat until the model gives a final text answer (or MAX_ROUNDS is reached).
  */
 export async function runAgent(messages: ChatMessage[]): Promise<AgentResult> {
-  // Try real Gemini first, fallback to demo mode if it fails
+  // Try real AI first, fallback to demo mode if it fails
   if (!DEMO_MODE) {
+    console.log("🤖 Attempting to use real AI API (via OpenRouter)...");
     try {
-      return await runRealAgent(messages);
+      const result = await runRealAgent(messages);
+      console.log("✅ AI API succeeded!");
+      return result;
     } catch (error) {
-      console.error("Gemini API failed, falling back to demo mode:", error);
+      console.error("❌ AI API failed, falling back to demo mode:");
+      console.error(error);
       // Fallback to simulated response
       return simulateAgentResponse(messages);
     }
   }
   
+  console.log("🎮 Using demo mode (DEMO_MODE=true)");
   // Demo mode: Simulate AI agent responses
   return simulateAgentResponse(messages);
 }
 
 /**
- * Real Gemini agent implementation
+ * Real AI agent implementation using OpenAI SDK with OpenRouter
  */
 async function runRealAgent(messages: ChatMessage[]): Promise<AgentResult> {
-  const ai = getGemini();
+  const client = getGemini(); // Returns OpenAI client configured for OpenRouter
   const steps: AgentStep[] = [];
-  const functionDeclarations = toFunctionDeclarations(tools);
 
-  const contents: Content[] = messages.map((m) => ({
-    role: m.role,
-    parts: [{ text: m.text }],
+  // Convert tools to OpenAI format
+  const toolDefinitions = tools.map((tool) => ({
+    type: "function" as const,
+    function: {
+      name: tool.name,
+      description: tool.description,
+      parameters: tool.schema,
+    },
   }));
 
+  // Convert messages to OpenAI format
+  const openaiMessages: any[] = [
+    { role: "system", content: buildSystemPrompt() },
+    ...messages.map((m) => ({
+      role: m.role === "model" ? "assistant" : "user",
+      content: m.text,
+    })),
+  ];
+
   for (let round = 0; round < MAX_ROUNDS; round++) {
-    const response = await ai.models.generateContent({
+    const response = await client.chat.completions.create({
       model: GEMINI_MODEL,
-      contents,
-      config: {
-        systemInstruction: buildSystemPrompt(),
-        tools: [{ functionDeclarations }],
-        temperature: 0.2,
-      },
+      messages: openaiMessages,
+      tools: toolDefinitions,
+      temperature: 0.2,
     });
 
-    const calls = response.functionCalls ?? [];
+    const choice = response.choices[0];
+    if (!choice) {
+      throw new Error("No response from AI");
+    }
+
+    const message = choice.message;
+    
+    // Add assistant's response to history
+    openaiMessages.push(message);
+
+    // Check if there are tool calls
+    const toolCalls = message.tool_calls;
 
     // No tool requested: this is the final answer.
-    if (calls.length === 0) {
-      return { reply: response.text?.trim() || "Sorry, I could not answer that.", steps };
+    if (!toolCalls || toolCalls.length === 0) {
+      return { 
+        reply: message.content?.trim() || "Sorry, I could not answer that.", 
+        steps 
+      };
     }
 
-    // Keep Gemini's own turn (it carries the tool request) in the history.
-    const modelTurn = response.candidates?.[0]?.content;
-    if (modelTurn) contents.push(modelTurn);
-
-    const responseParts: Part[] = [];
-    for (const call of calls) {
-      const step = await runTool(call.name ?? "", call.args ?? {});
+    // Process tool calls
+    for (const toolCall of toolCalls) {
+      const toolName = toolCall.function.name;
+      const toolArgs = JSON.parse(toolCall.function.arguments || "{}");
+      
+      const step = await runTool(toolName, toolArgs);
       steps.push(step);
-      responseParts.push({
-        functionResponse: {
-          id: call.id,
-          name: call.name,
-          response: step.ok ? { result: step.result } : { error: step.error },
-        },
+
+      // Add tool result to messages
+      openaiMessages.push({
+        role: "tool",
+        tool_call_id: toolCall.id,
+        content: step.ok 
+          ? JSON.stringify({ result: step.result })
+          : JSON.stringify({ error: step.error }),
       });
     }
-    contents.push({ role: "user", parts: responseParts });
   }
 
   return {
