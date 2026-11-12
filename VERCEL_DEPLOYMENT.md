@@ -9,21 +9,33 @@
 
 ---
 
-## Step 1: Prepare Environment Variables
+## Step 1: Get a NEW Gemini API Key
 
-You'll need these 4 environment variables in Vercel:
+⚠️ **IMPORTANT**: Your current API key has been flagged as leaked and won't work.
+
+### Get a Fresh Key:
+1. Go to **Google AI Studio**: https://aistudio.google.com/apikey
+2. **Delete the old key** if shown
+3. **Create New Key** → Select your Google Cloud project (or create one)
+4. **Copy the new key** immediately
+5. **Keep it secret** - Never push to GitHub or share publicly
+
+### Update Environment Variables
+
+You'll need these environment variables in Vercel:
 
 ```env
-GEMINI_API_KEY=AIzaSyDZLvsuuUFpzgddiwIDi2v7guzxx_yJv0c
-GEMINI_MODEL=gemini-1.5-flash
+GEMINI_API_KEY=<YOUR-NEW-API-KEY-HERE>
+GEMINI_MODEL=gemini-1.5-flash-latest
 SUPABASE_URL=https://gjqcwwlksgtwksilxskm.supabase.co
 SUPABASE_SECRET_KEY=<your-supabase-secret-key>
 APP_PASSCODE=PS2Z
 DEMO_MODE=false
 ```
 
-**Note:** Get your `SUPABASE_SECRET_KEY` from:
-- Supabase Dashboard → Project Settings → API → `service_role` key (secret)
+**Note:** 
+- Get your `SUPABASE_SECRET_KEY` from: Supabase Dashboard → Project Settings → API → `service_role` key (secret)
+- Use `gemini-1.5-flash-latest` as the model (not just `gemini-1.5-flash`)
 
 ---
 
@@ -46,8 +58,8 @@ DEMO_MODE=false
 
 5. **Add Environment Variables** (click "Environment Variables"):
    ```
-   GEMINI_API_KEY = AIzaSyDZLvsuuUFpzgddiwIDi2v7guzxx_yJv0c
-   GEMINI_MODEL = gemini-1.5-flash
+   GEMINI_API_KEY = <paste-your-NEW-key-here>
+   GEMINI_MODEL = gemini-1.5-flash-latest
    SUPABASE_URL = https://gjqcwwlksgtwksilxskm.supabase.co
    SUPABASE_SECRET_KEY = <paste-your-secret-key-here>
    APP_PASSCODE = PS2Z
