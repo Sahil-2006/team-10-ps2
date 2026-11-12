@@ -26,34 +26,26 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse" style={{animationDelay: '2s'}}></div>
-      </div>
-      
-      <form onSubmit={handleSubmit} className="relative w-full max-w-md glass rounded-3xl p-8 shadow-2xl animate-slide-up">
+    <main className="flex min-h-screen items-center justify-center p-4 bg-[#F5F1ED]">
+      <form onSubmit={handleSubmit} className="relative w-full max-w-md bg-white rounded-3xl p-8 shadow-lg border border-slate-200 animate-slide-up">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="relative">
-              <div className="absolute inset-0 blur-2xl bg-blue-500 opacity-30 rounded-full"></div>
-              <div className="relative text-7xl">📦</div>
-            </div>
+            <div className="text-7xl">📦</div>
           </div>
-          <h1 className="text-4xl font-bold gradient-text mb-2">Restocker</h1>
-          <p className="text-sm text-slate-400">AI-Powered Inventory Intelligence</p>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Restocker</h1>
+          <p className="text-sm text-slate-600">AI-Powered Inventory Intelligence</p>
         </div>
         
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Access Code</label>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Access Code</label>
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl">🔐</div>
               <input
                 type="password"
                 value={passcode}
                 onChange={(e) => setPasscode(e.target.value)}
-                className="w-full glass-light border border-slate-700 pl-14 pr-4 py-4 rounded-xl outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-white placeholder-slate-500"
+                className="w-full bg-[#F5F1ED] border border-slate-300 pl-14 pr-4 py-4 rounded-xl outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all text-slate-900 placeholder-slate-400"
                 placeholder="Enter your passcode"
                 autoFocus
               />
@@ -61,8 +53,8 @@ export default function LoginPage() {
           </div>
           
           {error && (
-            <div className="glass-light border border-red-500/30 rounded-xl p-4 animate-slide-up">
-              <p className="text-sm text-red-400 flex items-center gap-2">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-slide-up">
+              <p className="text-sm text-red-700 flex items-center gap-2">
                 <span className="text-lg">⚠️</span>
                 <span>{error}</span>
               </p>
@@ -72,7 +64,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading || !passcode}
-            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
+            className="w-full rounded-xl bg-slate-900 px-6 py-4 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-800 transition-all duration-300 hover:shadow-lg active:scale-95"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  @apply bg-[#F5F1ED] text-slate-900 antialiased;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(232, 228, 223, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(245, 241, 237, 0.3) 0px, transparent 50%);
 }
 
 /* Smooth scrolling */
@@ -33,21 +33,12 @@ html {
   }
 }
 
-@keyframes glow {
+@keyframes float {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    transform: translateY(0px);
   }
   50% {
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
+    transform: translateY(-10px);
   }
 }
 
@@ -59,26 +50,28 @@ html {
   animation: fadeIn 0.3s ease-out;
 }
 
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.glass {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+/* Elegant card style */
+.elegant-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
 }
 
-.glass-light {
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+.elegant-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Accent color */
+.accent-bg {
+  background: linear-gradient(135deg, #8B7355 0%, #6B5744 100%);
+}
+
+.accent-text {
+  color: #8B7355;
 }

@@ -22,41 +22,32 @@ export default function HomePage() {
   const { data, error } = useLiveData<Dashboard>("/api/dashboard", refreshKey);
 
   const cards = [
-    { label: "Low stock items", value: data ? String(data.low_stock_count) : "-", icon: "⚠️", color: "from-red-500 to-orange-500", bgGlow: "bg-red-500" },
-    { label: "Reorder value needed", value: data ? formatRs(data.reorder_value) : "-", icon: "💰", color: "from-emerald-500 to-teal-500", bgGlow: "bg-emerald-500" },
-    { label: "At risk before delivery", value: data ? String(data.at_risk_count) : "-", icon: "🔥", color: "from-amber-500 to-yellow-500", bgGlow: "bg-amber-500" },
+    { label: "Low stock items", value: data ? String(data.low_stock_count) : "-", icon: "⚠️", color: "text-red-600" },
+    { label: "Reorder value needed", value: data ? formatRs(data.reorder_value) : "-", icon: "💰", color: "text-emerald-600" },
+    { label: "At risk before delivery", value: data ? String(data.at_risk_count) : "-", icon: "🔥", color: "text-orange-600" },
     {
       label: "Open POs",
       value: data ? `${data.open_po_count} · ${formatRs(data.open_po_value)}` : "-",
       icon: "📋",
-      color: "from-blue-500 to-indigo-500",
-      bgGlow: "bg-blue-500"
+      color: "text-blue-600"
     },
   ];
 
   return (
-    <main className="mx-auto max-w-7xl space-y-6 p-6">
+    <main className="mx-auto max-w-7xl space-y-6 p-8">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
         {cards.map((c, i) => (
           <div 
             key={c.label} 
-            className="group relative animate-slide-up glass-light rounded-2xl p-6 transition-all duration-300 hover:scale-105"
+            className="elegant-card rounded-2xl p-6 animate-slide-up"
             style={{ animationDelay: `${i * 100}ms` }}
           >
-            {/* Glow effect */}
-            <div className={`absolute inset-0 ${c.bgGlow} opacity-0 group-hover:opacity-10 blur-2xl transition-opacity duration-300 rounded-2xl`}></div>
-            
-            <div className="relative">
-              <div className="flex items-start justify-between mb-3">
-                <div className={`text-4xl bg-gradient-to-br ${c.color} bg-clip-text opacity-80 group-hover:opacity-100 transition-opacity`}>
-                  {c.icon}
-                </div>
-                <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${c.color} opacity-20`}></div>
-              </div>
-              <p className="text-sm text-slate-400 uppercase tracking-wider font-semibold mb-2">{c.label}</p>
-              <p className="text-3xl font-bold text-white">{c.value}</p>
+            <div className="flex items-start justify-between mb-4">
+              <span className={`text-4xl ${c.color}`}>{c.icon}</span>
             </div>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">{c.label}</p>
+            <p className="text-3xl font-bold text-slate-900">{c.value}</p>
           </div>
         ))}
       </div>

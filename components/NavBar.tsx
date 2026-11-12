@@ -19,44 +19,36 @@ export default function NavBar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 glass border-b border-slate-800">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 blur-xl bg-blue-500 opacity-20 rounded-full"></div>
-              <span className="relative text-4xl">📦</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold gradient-text">Restocker</h1>
-              <p className="text-xs text-slate-400">FreshMart Velachery</p>
-            </div>
+    <header className="sticky top-0 z-50 bg-white border-b border-black/10 shadow-sm">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">📦</span>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Restocker</h1>
+            <p className="text-xs text-slate-500">FreshMart Velachery</p>
           </div>
         </div>
         
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-1">
           {LINKS.map((l) => {
             const active = l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
             return (
               <Link
                 key={l.href}
                 href={l.href}
-                className={`relative px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 ${
+                className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 ${
                   active 
-                    ? "text-white" 
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/50"
+                    ? "bg-slate-900 text-white shadow-md" 
+                    : "text-slate-700 hover:bg-slate-100"
                 }`}
               >
-                {active && (
-                  <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg"></span>
-                )}
-                <span className="relative">{l.label}</span>
+                {l.label}
               </Link>
             );
           })}
           <button 
             onClick={logout} 
-            className="ml-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-300 border border-slate-800 hover:border-red-500/30"
+            className="ml-2 px-5 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
           >
             Log out
           </button>
