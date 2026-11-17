@@ -10,7 +10,7 @@ export async function GET() {
   const settings = Object.fromEntries(names.map((n) => [n, Boolean(process.env[n]?.trim())]));
   const envOk = Object.values(settings).every(Boolean);
   let database = false;
-  if (envOk) {
+  if (settings.SUPABASE_URL && settings.SUPABASE_SECRET_KEY) {
     const { error } = await getSupabase().from("products").select("sku").limit(1);
     database = !error;
   }

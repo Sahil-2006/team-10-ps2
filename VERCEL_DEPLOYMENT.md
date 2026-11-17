@@ -9,16 +9,12 @@
 
 ---
 
-## Step 1: Get a NEW Gemini API Key
+## Step 1: Configure a Gemini API key
 
-⚠️ **IMPORTANT**: Your current API key has been flagged as leaked and won't work.
-
-### Get a Fresh Key:
 1. Go to **Google AI Studio**: https://aistudio.google.com/apikey
-2. **Delete the old key** if shown
-3. **Create New Key** → Select your Google Cloud project (or create one)
-4. **Copy the new key** immediately
-5. **Keep it secret** - Never push to GitHub or share publicly
+2. **Create New Key** → Select your Google Cloud project (or create one)
+3. **Copy the new key** immediately
+4. **Keep it secret** - Never push to GitHub or share publicly
 
 ### Update Environment Variables
 
@@ -26,16 +22,15 @@ You'll need these environment variables in Vercel:
 
 ```env
 GEMINI_API_KEY=<YOUR-NEW-API-KEY-HERE>
-GEMINI_MODEL=gemini-1.5-flash-latest
+GEMINI_MODEL=gemini-3.8-flash
 SUPABASE_URL=https://gjqcwwlksgtwksilxskm.supabase.co
 SUPABASE_SECRET_KEY=<your-supabase-secret-key>
 APP_PASSCODE=PS2Z
-DEMO_MODE=false
 ```
 
 **Note:** 
 - Get your `SUPABASE_SECRET_KEY` from: Supabase Dashboard → Project Settings → API → `service_role` key (secret)
-- Use `gemini-1.5-flash-latest` as the model (not just `gemini-1.5-flash`)
+- Use the Google AI Studio key for the project that has access to this model.
 
 ---
 
@@ -59,11 +54,10 @@ DEMO_MODE=false
 5. **Add Environment Variables** (click "Environment Variables"):
    ```
    GEMINI_API_KEY = <paste-your-NEW-key-here>
-   GEMINI_MODEL = gemini-1.5-flash-latest
+   GEMINI_MODEL = gemini-3.8-flash
    SUPABASE_URL = https://gjqcwwlksgtwksilxskm.supabase.co
    SUPABASE_SECRET_KEY = <paste-your-secret-key-here>
    APP_PASSCODE = PS2Z
-   DEMO_MODE = false
    ```
 
 6. **Click "Deploy"** and wait 2-3 minutes
@@ -88,7 +82,6 @@ vercel --prod
 # - SUPABASE_URL
 # - SUPABASE_SECRET_KEY
 # - APP_PASSCODE
-# - DEMO_MODE
 ```
 
 ---
@@ -100,7 +93,7 @@ vercel --prod
    ```
    https://your-app.vercel.app/api/health
    ```
-   Should return: `{"ok":true}`
+   Check that `ok` is true for environment presence and database access. Test the AI agent below to verify the key and model.
 
 3. **Login with passcode**: `PS2Z`
 4. **Test AI agent**: Try asking "What do I need to reorder this week?"
@@ -157,8 +150,8 @@ Restocker uses an elegant cream/beige color scheme:
 
 ## 🔧 Troubleshooting
 
-### Issue: "Models/gemini-1.5-flash is not found"
-**Solution**: Verify `GEMINI_MODEL=gemini-1.5-flash` in environment variables
+### Issue: "Models/gemini-3.8-flash is not found"
+**Solution**: Verify `GEMINI_MODEL=gemini-3.8-flash` in environment variables
 
 ### Issue: "Wrong passcode"
 **Solution**: Ensure `APP_PASSCODE=PS2Z` is set correctly

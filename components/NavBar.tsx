@@ -20,7 +20,7 @@ export default function NavBar() {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-black/10 shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-4">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-y-2 px-4 py-2 sm:px-8 sm:py-4">
         <div className="flex items-center gap-3">
           <span className="text-3xl">📦</span>
           <div>
@@ -29,14 +29,14 @@ export default function NavBar() {
           </div>
         </div>
         
-        <nav className="flex items-center gap-1">
+        <nav className="flex w-full flex-wrap items-center justify-between gap-1 sm:w-auto">
           {LINKS.map((l) => {
             const active = l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
             return (
               <Link
                 key={l.href}
                 href={l.href}
-                className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 ${
+                className={`px-2 py-2.5 sm:px-5 rounded-lg font-medium text-sm transition-all duration-200 ${
                   active 
                     ? "bg-slate-900 text-white shadow-md" 
                     : "text-slate-700 hover:bg-slate-100"
@@ -48,7 +48,7 @@ export default function NavBar() {
           })}
           <button 
             onClick={logout} 
-            className="ml-2 px-5 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+            className="px-2 py-2.5 sm:ml-2 sm:px-5 rounded-lg text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
           >
             Log out
           </button>

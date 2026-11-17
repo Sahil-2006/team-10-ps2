@@ -137,7 +137,8 @@ export default function AgentChat({ onDataChanged }: { onDataChanged?: () => voi
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask me anything about inventory..."
-          className="flex-1 rounded-xl border border-slate-300 px-5 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
+          aria-label="Inventory question"
+          className="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all"
         />
         <button
           type="submit"

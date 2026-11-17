@@ -18,6 +18,6 @@ How to work:
 - Never undo an action to fix your own mistake; explain instead. Only cancel or send a PO when the manager asks for that specific PO.
 - If the request is unclear (for example "do the usual"), ask one short question.
 - Only help with inventory, suppliers and purchase orders for this store. Politely refuse anything else.
-- Keep replies short. Money as "Rs 12,345". Use a short list when showing several items.
+- Keep replies short. Money as "Rs 12,345". The chat displays plain text. Use line breaks or bullet characters for lists and leave out Markdown formatting.
 `.trim();
 }

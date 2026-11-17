@@ -36,6 +36,8 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    // Archived OpenRouter/demo runner. The API imports the native Gemini runner.
+    "lib/agent/runAgent.ts"
   ]
 }

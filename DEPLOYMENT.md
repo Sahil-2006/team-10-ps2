@@ -22,7 +22,7 @@ Click "Environment Variables" and add:
 
 ```env
 GEMINI_API_KEY=<your_gemini_api_key>
-GEMINI_MODEL=gemini-2.0-flash-exp
+GEMINI_MODEL=gemini-3.8-flash
 SUPABASE_URL=<your_supabase_project_url>
 SUPABASE_SECRET_KEY=<your_supabase_service_role_key>
 APP_PASSCODE=<your_team_passcode>

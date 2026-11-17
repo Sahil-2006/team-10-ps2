@@ -77,7 +77,7 @@ Try these prompts:
 
 ### Error: "Gemini model not found"
 **Cause:** Model name incorrect  
-**Fix:** Already fixed - using `gemini-1.5-flash`
+**Fix:** Set `GEMINI_MODEL=gemini-3.8-flash` and restart or redeploy.
 
 ### Dashboard shows "-" everywhere
 **Cause:** Database connection issue  
@@ -109,7 +109,7 @@ Each product has:
 - Linked supplier
 
 ### Purchase Orders
-- Empty at start
+- The seed includes one received order, so the dashboard starts with no open orders.
 - Agent creates them based on low stock
 
 ---
@@ -124,19 +124,6 @@ Build an AI agent that:
 5. ✅ Calculates order totals and expected dates
 
 All data is in `seed/ps2_inventory_restock.sql` - the agent should work with this!
-
----
-
-## 💡 Demo Mode (Alternative)
-
-If you can't setup the database right now, you can use demo mode:
-
-1. Edit `.env.local`
-2. Change: `DEMO_MODE=true`
-3. Restart server
-4. App will use fake data (no database needed)
-
-**Note:** For hackathon judging, use the REAL database with the seed file!
 
 ---
 
