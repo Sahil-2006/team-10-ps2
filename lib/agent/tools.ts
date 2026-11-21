@@ -9,8 +9,6 @@ import {
   isLow,
   daysLeft,
   isAtRisk,
-  addDaysInIndia,
-  formatRs,
   assertStatusChange,
   type Product,
 } from "../inventory";
@@ -220,112 +218,50 @@ const createPurchaseOrders = defineTool({
       .describe("Only order these specific SKUs, like SKU012. Leave out to order all matching low items."),
   }),
   run: async ({ category, supplier_id, skus }) => {
-    const [products, open] = await Promise.all([getProductsWithSuppliers(), getOpenOrderSkus()]);
+    const { data, error } = await getSupabase().rpc("create_stockpilot_purchase_orders", {
+      p_category: category ?? null,
+      p_supplier_id: supplier_id ?? null,
+      p_skus: skus ?? null,
+    });
+    if (error) throw new Error(error.message);
+    if (!data) throw new Error("Could not create purchase orders.");
 
-    // Check that the ids exist
-    if (supplier_id && !products.some((p) => p.supplier_id === supplier_id)) {
-      throw new Error(`Unknown supplier ${supplier_id}.`);
-    }
-    const unknown = (skus ?? []).filter((s) => !products.some((p) => p.sku === s));
-    if (unknown.length) throw new Error(`Unknown SKU: ${unknown.join(", ")}.`);
-
-    // Pick the requested items
-    let picked = products;
-    if (category) picked = picked.filter((p) => p.category === category);
-    if (supplier_id) picked = picked.filter((p) => p.supplier_id === supplier_id);
-    if (skus) picked = picked.filter((p) => skus.includes(p.sku));
-    if (!picked.length) throw new Error("No products match that request.");
-
-    // Split into: order now / not low / already ordered
-    const toOrder: Product[] = [];
-    const skippedNotLow: { sku: string; name: string; stock_qty: number; reorder_level: number }[] = [];
-    const skippedAlreadyOrdered: { sku: string; name: string; purchase_order_id: number }[] = [];
-    for (const p of picked) {
-      const onPo = open.get(p.sku);
-      if (!isLow(p)) {
-        // When asking for everything, non-low items are not interesting. Only report explicit requests.
-        if (skus) skippedNotLow.push({ sku: p.sku, name: p.name, stock_qty: p.stock_qty, reorder_level: p.reorder_level });
-      } else if (onPo !== undefined) {
-        skippedAlreadyOrdered.push({ sku: p.sku, name: p.name, purchase_order_id: onPo });
-      } else {
-        toOrder.push(p);
-      }
-    }
-    if (!toOrder.length) {
-      const why: string[] = [];
-      if (skippedNotLow.length)
-        why.push(
-          "not low: " + skippedNotLow.map((s) => `${s.name} has ${s.stock_qty}, reorder level ${s.reorder_level}`).join("; ")
-        );
-      if (skippedAlreadyOrdered.length)
-        why.push(
-          "already ordered: " +
-            skippedAlreadyOrdered.map((s) => `${s.name} is already on PO #${s.purchase_order_id}`).join("; ")
-        );
-      if (!why.length) why.push("none of the matching items are below their reorder level");
-      throw new Error(`Nothing was ordered. ${why.join(". ")}.`);
-    }
-
-    // One PO per supplier
-    const bySupplier = new Map<string, Product[]>();
-    for (const p of toOrder) bySupplier.set(p.supplier_id, [...(bySupplier.get(p.supplier_id) ?? []), p]);
-
-    const db = getSupabase();
-    const created = [];
-    for (const [sid, items] of bySupplier) {
-      const first = items[0];
-      const total = items.reduce((s, p) => s + p.reorder_qty * p.unit_cost, 0);
-      const warning =
-        total < first.min_order_value
-          ? `Below min order value of ${formatRs(first.min_order_value)}`
-          : null;
-      const expected = addDaysInIndia(first.lead_time_days);
-      const { data: po, error } = await db
-        .from("purchase_orders")
-        .insert({
-          supplier_id: sid,
-          status: "draft",
-          total_cost: total,
-          expected_date: expected,
-          notes: "Created by StockPilot agent" + (warning ? ` | ${warning}` : ""),
-        })
-        .select("id")
-        .single();
-      if (error) throw new Error(error.message);
-      const { error: itemsError } = await db.from("purchase_order_items").insert(
-        items.map((p) => ({
-          purchase_order_id: po.id,
-          sku: p.sku,
-          quantity: p.reorder_qty,
-          unit_cost: p.unit_cost,
-        }))
-      );
-      if (itemsError) {
-        // No half-made PO left behind
-        await db.from("purchase_orders").delete().eq("id", po.id);
-        throw new Error(itemsError.message);
-      }
-      created.push({
-        purchase_order_id: Number(po.id),
-        supplier_id: sid,
-        supplier_name: first.supplier_name,
-        items: items.map((p) => ({
-          sku: p.sku,
-          name: p.name,
-          quantity: p.reorder_qty,
-          unit_cost: p.unit_cost,
-        })),
-        total_cost: total,
-        expected_date: expected,
-        warning,
-      });
-    }
-    return {
-      created,
-      skipped_not_low: skippedNotLow.slice(0, 20),
-      skipped_already_ordered: skippedAlreadyOrdered.slice(0, 20),
-      grand_total: created.reduce((s, c) => s + c.total_cost, 0),
+    const result = data as {
+      created: {
+        purchase_order_id: number;
+        supplier_id: string;
+        supplier_name: string;
+        items: { sku: string; name: string; quantity: number; unit_cost: number }[];
+        total_cost: number;
+        expected_date: string;
+        warning: string | null;
+      }[];
+      skipped_not_low: { sku: string; name: string; stock_qty: number; reorder_level: number }[];
+      skipped_already_ordered: { sku: string; name: string; purchase_order_id: number }[];
+      grand_total: number;
     };
+    if (result.created.length === 0) {
+      const reasons: string[] = [];
+      if (result.skipped_not_low.length) {
+        reasons.push(
+          "not low: " +
+            result.skipped_not_low
+              .map((item) => `${item.name} has ${item.stock_qty}, reorder level ${item.reorder_level}`)
+              .join("; ")
+        );
+      }
+      if (result.skipped_already_ordered.length) {
+        reasons.push(
+          "already ordered: " +
+            result.skipped_already_ordered
+              .map((item) => `${item.name} is already on PO #${item.purchase_order_id}`)
+              .join("; ")
+        );
+      }
+      if (reasons.length === 0) reasons.push("none of the matching items are below their reorder level");
+      throw new Error(`Nothing was ordered. ${reasons.join(". ")}.`);
+    }
+    return result;
   },
 });
 

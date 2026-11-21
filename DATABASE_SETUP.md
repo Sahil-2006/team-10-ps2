@@ -37,6 +37,11 @@ Click **"Table Editor"** in left sidebar. You should see:
 - ✅ `purchase_orders`
 - ✅ `purchase_order_items`
 
+### Step 6: Install Safe Purchase-Order Creation
+1. Open a new SQL Editor query.
+2. Run `seed/ps2_purchase_order_safety.sql`.
+3. This adds the atomic purchase-order RPC without dropping or resetting existing data. Re-running it is safe.
+
 ---
 
 ## 🧪 Test Your Setup

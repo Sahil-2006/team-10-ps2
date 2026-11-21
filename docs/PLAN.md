@@ -52,7 +52,7 @@ No logged-in user id for PS2 (the user is the store manager). Skip `lib/currentU
 4. An item already in a draft or sent PO is skipped ("already on PO #3"). This stops duplicate orders if the manager asks twice.
 5. **One PO per supplier** per call; `expected_date = today (IST) + lead_time_days`.
 6. If a PO total < supplier `min_order_value` → still created, with a warning in `notes` and in the reply.
-7. If inserting items fails, delete the half-made PO (no orphan rows).
+7. Create each request through one database transaction. Product row locks prevent overlapping requests from placing duplicate open orders; any failure rolls back all POs and lines from the request.
 
 Zod validates every argument (enums for category and status, `SKU\d{3}` / `SUP\d{2}` regex, limits). `MAX_ROUNDS` goes 5 → 8 because "create POs for dairy" uses 2–3 tools.
 
@@ -185,12 +185,10 @@ In lib/agent/tools.ts add 2 write tools (writes: true), using the helpers in lib
    Args (all optional, Zod): category (enum), supplier_id (^SUP\d{2}$), skus (array of ^SKU\d{3}$, 1-30 items). If no args: all low items.
    Gemini must NOT send quantities, prices or totals; there are no such args.
    Steps:
-   a. Load products with suppliers and the open-order SKU map.
-   b. Pick the requested items. Unknown SKU or supplier -> throw a clear error.
-   c. Split them into: to_order (low AND not already on a draft/sent PO), skipped_not_low (with stock_qty and reorder_level), skipped_already_ordered (with the PO id).
-   d. If to_order is empty, throw new Error with a clear explanation of why nothing was ordered.
-   e. Group to_order by supplier_id. For each supplier: insert one purchase_orders row (status 'draft', total_cost = sum of reorder_qty * unit_cost, expected_date = addDaysInIndia(lead_time_days), notes "Created by StockPilot agent" plus " | Below min order value of Rs X" if total < min_order_value). Then insert its purchase_order_items (quantity = reorder_qty, unit_cost = product unit_cost). If the items insert fails, delete that purchase_orders row and throw.
-   f. Return created POs (id, supplier name, item lines, total, expected_date, warning), skipped_not_low, skipped_already_ordered, grand_total.
+   a. Pass only the requested filters to `create_stockpilot_purchase_orders`; Gemini never sends quantities, prices or totals.
+   b. The RPC validates supplier/SKU ids, locks the matching product rows, and rechecks low stock and open orders inside the transaction.
+   c. The RPC groups eligible products by supplier, computes quantities/prices/totals from the database, and inserts all POs and lines atomically. A retry skips items already on a draft/sent PO.
+   d. Return created POs (id, supplier name, item lines, total, expected_date, warning), skipped_not_low, skipped_already_ordered, grand_total. If nothing is created, throw a clear explanation.
    Description: "Use this when the manager clearly asks to create, raise or place purchase orders / restock orders. Never call it just to show what is low."
 
 2. updatePurchaseOrderStatus

@@ -64,6 +64,7 @@ Try these commands:
 3. Run these files in order:
    - `seed/00_starter_example.sql`
    - `seed/ps2_inventory_restock.sql`
+   - `seed/ps2_purchase_order_safety.sql` (installs the atomic PO writer; preserves current data)
 
 ---
 

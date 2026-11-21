@@ -37,11 +37,11 @@
 1. Low means `stock_qty <= reorder_level`. Days left = stock / average daily sales. At risk means days left is less than the supplier lead time.
 2. Gemini only chooses which items. Quantity (reorder quantity), price (unit cost) and totals are computed by the server from the database.
 3. Items that are not low are never ordered; the reply says why.
-4. Items already on a draft or sent PO are never ordered again.
+4. Purchase-order creation locks the affected product rows and skips items already on an open PO, so concurrent requests and retries do not create duplicate orders.
 5. One draft PO per supplier. Expected date = today (India time) + supplier lead time.
 6. A PO below the supplier's minimum order value is still created, with a warning in its notes.
 7. Status changes allowed: draft to sent, draft to cancelled, sent to cancelled. Anything else is refused.
-8. If saving the PO lines fails, the half-made PO is deleted.
+8. A single database transaction creates all orders and their lines. Any insert failure rolls back the entire request.
 
 ## Tech stack
 
@@ -51,9 +51,10 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, Next.js route handlers, Z
 
 1. `npm install`
 2. In Supabase SQL Editor, run `seed/00_starter_example.sql`, then `seed/ps2_inventory_restock.sql`.
-3. Copy `.env.example` to `.env.local` and fill in `GEMINI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `APP_PASSCODE`.
-4. `npm run dev`, open http://localhost:3000 and enter the passcode.
-5. Check `/api/health` if something does not work.
+3. Run `seed/ps2_purchase_order_safety.sql` to install the atomic purchase-order RPC. It preserves existing data and can be rerun safely.
+4. Copy `.env.example` to `.env.local` and fill in `GEMINI_API_KEY`, `SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `APP_PASSCODE`.
+5. `npm run dev`, open http://localhost:3000 and enter the passcode.
+6. Check `/api/health` if something does not work.
 
 ## Team
 Team 10	PS2	Inventory Restock Agent	Supply chain	RA2411033010095	ZIYA KHAN	zk8757@srmist.edu.in	AM2	
